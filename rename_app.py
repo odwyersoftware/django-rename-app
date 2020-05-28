@@ -1,5 +1,5 @@
 """
-A Django Management Command to rename Django Applications.
+A Django Management Command to rename existing Django Applications.
 
 See https://github.com/odwyersoftware/django-rename-app
 """

@@ -1,2 +1,3 @@
 # django-rename-app
-Django command to rename an app
+
+A Django Management Command to rename existing Django Applications.
