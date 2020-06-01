@@ -21,7 +21,7 @@ INSTALLED_APPS = [
 # Usage
 
 
-`python manage.py rename_app sample experiment`
+`python manage.py rename_app <old_app_name> <new_app_name>`
 
 For full detailed instructions see https://odwyer.software/blog/how-to-rename-an-existing-django-application
 
