@@ -1,5 +1,5 @@
-flake8
-pep8-naming
-mccabe
-yapf
-zest.releaser
+flake8==3.8.2
+pep8-naming==0.10.0
+mccabe==0.6.1
+yapf==0.30.0
+zest.releaser==6.20.1
