@@ -2,7 +2,7 @@
 
 A Django Management Command to rename existing Django Applications.
 
-[![Build Status](https://travis-ci.org/ODwyerSoftware/django-rename-app.svg?branch=master)](https://travis-ci.org/ODwyerSoftware/django-rename-app) [![PyPI version](https://badge.fury.io/py/django-rename-app.svg)](https://pypi.org/project/django-rename-app/)
+[![PyPI version](https://badge.fury.io/py/django-rename-app.svg)](https://pypi.org/project/django-rename-app/)
 
 # Installation
 
