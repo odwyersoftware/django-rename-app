@@ -27,7 +27,9 @@ setup(
     packages=find_packages(exclude=('tests',)),
     include_package_data=True,
     zip_safe=False,
-    description=readme,
+    description=(
+        'A Django Management Command to rename existing Django Applications.'
+    ),
     author='O\'Dwyer Software',
     author_email='hello@odwyer.software',
     url='https://github.com/odwyersoftware/django-rename-app',
