@@ -23,7 +23,7 @@ with open('HISTORY.md', 'r', encoding='utf-8') as hist_file:
 
 setup(
     name='django_rename_app',
-    version='0.1.0',
+    version='0.1.1.dev0',
     packages=find_packages(exclude=('tests',)),
     include_package_data=True,
     zip_safe=False,
