@@ -4,7 +4,7 @@ Release History
 0.1.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- When ran multiple times at the same time, Exception would raise from rename queries. Catch and log this instead of crashing.
 
 
 0.1.1 (2020-06-01)

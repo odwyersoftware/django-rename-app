@@ -7,7 +7,7 @@ See https://github.com/odwyersoftware/django-rename-app
 import logging
 
 from django.core.management.base import BaseCommand
-from django.db import connection
+from django.db import connection, ProgrammingError
 from django.apps import apps
 
 logger = logging.getLogger(__name__)
@@ -54,4 +54,9 @@ class Command(BaseCommand):
                     f"ALTER TABLE {old_name}_{model_name} "
                     f"RENAME TO {new_name}_{model_name}"
                 )
-                cursor.execute(query)
+                try:
+                    cursor.execute(query)
+                except ProgrammingError:
+                    logger.warning(
+                        'Rename query failed: "%s"', query, exc_info=True
+                    )
