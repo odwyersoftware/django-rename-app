@@ -1,7 +1,7 @@
 Release History
 ===============
 
-0.1.3 (unreleased)
+0.1.3 (2021-03-29)
 ------------------
 
 - Handle table name truncation as Django does.
