@@ -27,7 +27,7 @@ class Command(BaseCommand):
         with connection.cursor() as cursor:
             old_app_name = old_app_name[0]
             new_app_name = new_app_name[0]
-
+            print(f"Renaming {old_app_name} to {new_app_name}, please wait...")
             cursor.execute(
                 "SELECT * FROM django_content_type "
                 f"where app_label='{new_app_name}'"
@@ -38,6 +38,7 @@ class Command(BaseCommand):
                     'Rename has already been done, exiting without '
                     'making any changes'
                 )
+                print("Nothing to rename. Exiting.")
                 return None
 
             cursor.execute(
@@ -60,9 +61,10 @@ class Command(BaseCommand):
                     connection.ops.max_name_length()
                 )
 
+                print(f"Renaming {model_name} table from: {old_table_name} to: {new_table_name}.")
                 query = (
-                    f"ALTER TABLE {old_table_name} "
-                    f"RENAME TO {new_table_name}"
+                    f"ALTER TABLE \"{old_table_name}\" "
+                    f"RENAME TO \"{new_table_name}\""
                 )
                 try:
                     cursor.execute(query)
@@ -70,3 +72,5 @@ class Command(BaseCommand):
                     logger.warning(
                         'Rename query failed: "%s"', query, exc_info=True
                     )
+
+            print("Renaming successfully done!")
