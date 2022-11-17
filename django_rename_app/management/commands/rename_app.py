@@ -16,13 +16,11 @@ logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
-    help = (
-        'Renames a Django Application. Usage rename_app [old_app_name] [new_app_name]'
-    )
+    help = "Renames a Django Application. Usage rename_app [old_app_name] [new_app_name]"
 
     def add_arguments(self, parser):
-        parser.add_argument('old_app_name', nargs=1, type=str)
-        parser.add_argument('new_app_name', nargs=1, type=str)
+        parser.add_argument("old_app_name", nargs=1, type=str)
+        parser.add_argument("new_app_name", nargs=1, type=str)
 
     @atomic
     def handle(self, old_app_name, new_app_name, *args, **options):
@@ -41,8 +39,8 @@ class Command(BaseCommand):
             if has_already_been_ran:
 
                 logger.info(
-                    'Rename has already been done, exiting without '
-                    'making any changes'
+                    "Rename has already been done, exiting without "
+                    "making any changes"
                 )
                 print("Nothing to rename. Exiting.")
                 return None
@@ -69,18 +67,20 @@ class Command(BaseCommand):
 
                 old_table_name = truncate_name(
                     f"{old_app_name}_{content_type[2]}",
-                    connection.ops.max_name_length()
+                    connection.ops.max_name_length(),
                 )
 
                 new_table_name = truncate_name(
                     f"{new_app_name}_{content_type[2]}",
-                    connection.ops.max_name_length()
+                    connection.ops.max_name_length(),
                 )
 
-                print(f"Renaming {model_name} table from: {old_table_name} to: {new_table_name}.")
+                print(
+                    f"Renaming {model_name} table from: {old_table_name} to: {new_table_name}."
+                )
                 query = (
-                    f"ALTER TABLE \"{old_table_name}\" "
-                    f"RENAME TO \"{new_table_name}\""
+                    f'ALTER TABLE "{old_table_name}" '
+                    f'RENAME TO "{new_table_name}"'
                 )
 
                 try:
