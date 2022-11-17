@@ -4,7 +4,8 @@ Release History
 0.1.4 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix for DB tables with uppercase chars.
+- Get content_type name from the database instead of making assumption.
 
 
 0.1.3 (2021-03-29)
