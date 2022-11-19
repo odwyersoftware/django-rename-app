@@ -1,7 +1,7 @@
 Release History
 ===============
 
-0.1.5 (unreleased)
+0.1.5 (2022-11-19)
 ------------------
 
 - Fix NameError.
