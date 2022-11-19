@@ -4,7 +4,7 @@ Release History
 0.1.5 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix NameError.
 
 
 0.1.4 (2022-11-17)

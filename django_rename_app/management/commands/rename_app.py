@@ -37,7 +37,6 @@ class Command(BaseCommand):
             has_already_been_ran = cursor.fetchone()
 
             if has_already_been_ran:
-
                 logger.info(
                     "Rename has already been done, exiting without "
                     "making any changes"
@@ -76,7 +75,7 @@ class Command(BaseCommand):
                 )
 
                 print(
-                    f"Renaming {model_name} table from: {old_table_name} to: {new_table_name}."
+                    f"Renaming table from: {old_table_name} to: {new_table_name}."
                 )
                 query = (
                     f'ALTER TABLE "{old_table_name}" '
