@@ -73,6 +73,51 @@ class Command(BaseCommand):
                     f"{new_app_name}_{content_type[2]}",
                     connection.ops.max_name_length(),
                 )
+                
+                get_all_constraints_query = (
+                    f"SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS "
+                    f"WHERE TABLE_NAME='{old_table_name}'"
+                )
+
+                try:
+                    cursor.execute(get_all_constraints_query)
+                    constraints = cursor.fetchall()
+
+                    constraints = [constraint[0] for constraint in constraints if constraint[0].startswith(old_table_name)]
+
+                    for constraint in constraints:
+                        query = (
+                            f'ALTER TABLE {old_table_name} '
+                            f'RENAME CONSTRAINT {constraint} TO {truncate_name(f"{new_table_name}{constraint[len(old_table_name):]}", connection.ops.max_name_length())}'
+                        )
+
+                        cursor.execute(query) 
+
+                        print(f'Renamed contraint {constraint} to {new_table_name}{constraint[len(old_table_name):]}')
+                except ProgrammingError:
+                    print("Getting error when renaming constraints")
+
+                get_all_indexes_query = (
+                    f"SELECT indexname FROM pg_indexes WHERE tablename='{old_table_name}'"
+                )
+
+                try:
+                    cursor.execute(get_all_indexes_query)
+                    indexes = cursor.fetchall()
+
+                    indexes = [index[0] for index in indexes if index[0].startswith(old_table_name)]
+
+                    for index in indexes:
+                        query = (
+                            f'ALTER INDEX {index} '
+                            f'RENAME TO {truncate_name(f"{new_table_name}{index[len(old_table_name):]}", connection.ops.max_name_length())}'
+                        )
+
+                        cursor.execute(query) 
+
+                        print(f'Renamed index {index} to {new_table_name}{index[len(old_table_name):]}')
+                except ProgrammingError:
+                    print("Getting error when renaming indexes")
 
                 print(
                     f"Renaming table from: {old_table_name} to: {new_table_name}."
