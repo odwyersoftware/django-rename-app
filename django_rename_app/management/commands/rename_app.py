@@ -53,9 +53,6 @@ class Command(BaseCommand):
                 f"WHERE app='{old_app_name}'"
             )
 
-            models = apps.all_models[new_app_name]
-            models.update(apps.all_models[old_app_name])
-
             cursor.execute(
                 f"SELECT * FROM  django_content_type "
                 f"WHERE app_label='{new_app_name}'"
