@@ -57,33 +57,119 @@ class Command(BaseCommand):
             models.update(apps.all_models[old_app_name])
 
             cursor.execute(
-                f"SELECT * FROM  django_content_type "
-                f"WHERE app_label='{new_app_name}'"
+                "SELECT sequence_schema, sequence_name "
+                "FROM information_schema.sequences "
+                f"WHERE sequence_name LIKE '{old_app_name}_%';"
             )
-            app_content_types = cursor.fetchall()
+            sequence_entries = cursor.fetchall()
 
-            for content_type in app_content_types:
+            for entry in sequence_entries:
+                suffix = entry[1].removeprefix(f"{old_app_name}_")
+
+                old_sequence_name = truncate_name(
+                    f"{old_app_name}_{suffix}",
+                    connection.ops.max_name_length(),
+                )
+
+                new_sequence_name = truncate_name(
+                    f"{new_app_name}_{suffix}",
+                    connection.ops.max_name_length(),
+                )
+
+                try:
+                    query = (
+                        f'ALTER SEQUENCE "{old_sequence_name}" '
+                        f'RENAME TO "{new_sequence_name}"'
+                    )
+                    cursor.execute(query)
+                    print(
+                        f"Renamed sequence from [{old_sequence_name}] to [{new_sequence_name}]."
+                    )
+                except ProgrammingError:
+                    logger.warning(
+                        'Rename query failed: "%s"', query, exc_info=True
+                    )
+
+            cursor.execute(
+                "SELECT table_name FROM information_schema.tables "
+                f"WHERE table_name LIKE '{old_app_name}_%';"
+            )
+            table_names = cursor.fetchall()
+
+            for table_name in table_names:
+
+                suffix = table_name[0].removeprefix(f"{old_app_name}_")
 
                 old_table_name = truncate_name(
-                    f"{old_app_name}_{content_type[2]}",
+                    f"{old_app_name}_{suffix}",
                     connection.ops.max_name_length(),
                 )
 
                 new_table_name = truncate_name(
-                    f"{new_app_name}_{content_type[2]}",
+                    f"{new_app_name}_{suffix}",
                     connection.ops.max_name_length(),
                 )
 
-                print(
-                    f"Renaming table from: {old_table_name} to: {new_table_name}."
-                )
-                query = (
-                    f'ALTER TABLE "{old_table_name}" '
-                    f'RENAME TO "{new_table_name}"'
+                get_all_constraints_query = (
+                    f"SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS "
+                    f"WHERE TABLE_NAME='{old_table_name}'"
                 )
 
                 try:
+                    cursor.execute(get_all_constraints_query)
+                    constraints = cursor.fetchall()
+
+                    constraints = [constraint[0] for constraint in constraints if constraint[0].startswith(f"{old_app_name}_")]
+
+                    for constraint in constraints:
+
+                        new_constraint_name = truncate_name(f"{new_table_name}{constraint.removeprefix(old_table_name)}", connection.ops.max_name_length())
+
+                        if f'_fk_{old_app_name}_' in new_constraint_name:
+                            new_constraint_name = new_constraint_name.replace(f'_fk_{old_app_name}_', f'_fk_{new_app_name}_')
+
+                        query = (
+                            f'ALTER TABLE {old_table_name} '
+                            f'RENAME CONSTRAINT {constraint} TO {new_constraint_name}'
+                        )
+
+                        cursor.execute(query)
+
+                        print(f'Renamed constraint [{constraint}] to [{new_constraint_name}]')
+                except ProgrammingError:
+                    print("Getting error when renaming constraints")
+
+                get_all_indexes_query = (
+                    f"SELECT indexname FROM pg_indexes WHERE tablename='{old_table_name}'"
+                )
+
+                try:
+                    cursor.execute(get_all_indexes_query)
+                    indexes = cursor.fetchall()
+
+                    indexes = [index[0] for index in indexes if index[0].startswith(f"{old_app_name}_")]
+
+                    for index in indexes:
+                        query = (
+                            f'ALTER INDEX {index} '
+                            f'RENAME TO {truncate_name(f"{new_table_name}{index[len(old_table_name):]}", connection.ops.max_name_length())}'
+                        )
+
+                        cursor.execute(query)
+
+                        print(f'Renamed index [{index}] to [{new_table_name}{index[len(old_table_name):]}]')
+                except ProgrammingError:
+                    print("Getting error when renaming indexes")
+
+                try:
+                    query = (
+                        f'ALTER TABLE "{old_table_name}" '
+                        f'RENAME TO "{new_table_name}"'
+                    )
                     cursor.execute(query)
+                    print(
+                        f"Renamed table from [{old_table_name}] to [{new_table_name}]."
+                    )
                 except ProgrammingError:
                     logger.warning(
                         'Rename query failed: "%s"', query, exc_info=True
