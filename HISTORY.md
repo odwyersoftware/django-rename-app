@@ -4,7 +4,7 @@ Release History
 0.1.6 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix for rename sequences, indexes, constraints and M2M tables.
 
 
 0.1.5 (2022-11-19)
