@@ -15,6 +15,12 @@ from django.apps import apps
 logger = logging.getLogger(__name__)
 
 
+def removeprefix(value, prefix):
+    if value.startswith(prefix):
+        return value[len(prefix):]
+    return value
+
+
 class Command(BaseCommand):
     help = (
         'Renames a Django Application. '
@@ -67,7 +73,7 @@ class Command(BaseCommand):
             sequence_entries = cursor.fetchall()
 
             for entry in sequence_entries:
-                suffix = entry[1].removeprefix(f'{old_app_name}_')
+                suffix = removeprefix(entry[1], f'{old_app_name}_')
 
                 old_sequence_name = truncate_name(
                     f'{old_app_name}_{suffix}',
@@ -102,7 +108,7 @@ class Command(BaseCommand):
 
             for table_name in table_names:
 
-                suffix = table_name[0].removeprefix(f'{old_app_name}_')
+                suffix = removeprefix(table_name[0], f'{old_app_name}_')
 
                 old_table_name = truncate_name(
                     f'{old_app_name}_{suffix}',
@@ -132,7 +138,7 @@ class Command(BaseCommand):
 
                     for constraint in constraints:
                         new_constraint_name = truncate_name(
-                            f'{new_table_name}{constraint.removeprefix(old_table_name)}',  # noqa: E501
+                            f'{new_table_name}{removeprefix(constraint, old_table_name)}',  # noqa: E501
                             connection.ops.max_name_length(),
                         )
 
