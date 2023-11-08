@@ -4,7 +4,7 @@ Release History
 0.1.7 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fixes for Python 3.7+.
 
 
 0.1.6 (2023-03-05)
