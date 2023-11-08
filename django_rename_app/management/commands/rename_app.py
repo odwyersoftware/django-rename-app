@@ -61,9 +61,6 @@ class Command(BaseCommand):
                 f"WHERE app='{old_app_name}'"
             )
 
-            models = apps.all_models[new_app_name]
-            models.update(apps.all_models[old_app_name])
-
             cursor.execute(
                 "SELECT sequence_schema, sequence_name "
                 "FROM information_schema.sequences "
