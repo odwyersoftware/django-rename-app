@@ -1,7 +1,7 @@
 Release History
 ===============
 
-0.1.7 (unreleased)
+## 0.1.7 (2023-11-08)
 ------------------
 
 - Fixes for Python 3.7+.
